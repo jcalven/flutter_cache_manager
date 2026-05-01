@@ -21,6 +21,15 @@ abstract class CacheInfoRepository {
   /// Gets a [CacheObject] by [key]
   Future<CacheObject?> get(String key);
 
+  /// Gets [CacheObject]s for the provided [keys] in a single round-trip.
+  ///
+  /// Returns a map keyed by `CacheObject.key` containing only the keys present
+  /// in the cache. Missing keys are absent from the returned map.
+  ///
+  /// Implementations are expected to be efficient (single batched query for
+  /// SQL-backed repos, single in-memory lookup for the others).
+  Future<Map<String, CacheObject>> getMany(Iterable<String> keys);
+
   /// Deletes a cache object by [id]
   Future<int> delete(int id);
 

@@ -28,6 +28,11 @@ class NonStoringObjectProvider implements CacheInfoRepository {
   }
 
   @override
+  Future<Map<String, CacheObject>> getMany(Iterable<String> keys) async {
+    return const {};
+  }
+
+  @override
   Future<List<CacheObject>> getObjectsOverCapacity(int capacity) {
     return Future.value([]);
   }

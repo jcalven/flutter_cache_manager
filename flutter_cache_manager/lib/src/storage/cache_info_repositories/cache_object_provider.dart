@@ -145,6 +145,25 @@ class CacheObjectProvider extends CacheInfoRepository
   }
 
   @override
+  Future<Map<String, CacheObject>> getMany(Iterable<String> keys) async {
+    final list = keys.toList();
+    if (list.isEmpty) return const {};
+    final placeholders = List.filled(list.length, '?').join(',');
+    final rows = await db!.query(
+      _tableCacheObject,
+      columns: null,
+      where: '${CacheObject.columnKey} IN ($placeholders)',
+      whereArgs: list,
+    );
+    final result = <String, CacheObject>{};
+    for (final row in rows) {
+      final obj = CacheObject.fromMap(row.cast<String, dynamic>());
+      result[obj.key] = obj;
+    }
+    return result;
+  }
+
+  @override
   Future<List<CacheObject>> getObjectsOverCapacity(int capacity) async {
     return CacheObject.fromMapList(await db!.query(
       _tableCacheObject,

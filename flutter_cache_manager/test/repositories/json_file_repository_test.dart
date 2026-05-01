@@ -223,6 +223,25 @@ void main() {
           JsonRepoHelpers.startCacheObjects.length + 1);
     });
   });
+
+  group('getMany', () {
+    test('returns only the keys present in the cache', () async {
+      final repository = await JsonRepoHelpers.createRepository();
+
+      final result = await repository.getMany([testurl, 'unknown-key']);
+
+      expect(result.keys, [testurl]);
+      expect(result[testurl]!.url, testurl);
+
+      await repository.close();
+    });
+
+    test('empty input returns empty map', () async {
+      final repository = await JsonRepoHelpers.createRepository();
+      expect(await repository.getMany(<String>[]), isEmpty);
+      await repository.close();
+    });
+  });
 }
 
 void expectIdInList(List<CacheObject> cacheObjects, int id) {

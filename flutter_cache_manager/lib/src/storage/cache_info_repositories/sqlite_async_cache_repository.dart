@@ -49,7 +49,7 @@ class SqliteAsyncCacheRepository extends CacheInfoRepository
         ''');
         await tx.execute('''
           CREATE UNIQUE INDEX IF NOT EXISTS
-            ${_tableCacheObject}${CacheObject.columnKey}
+            $_tableCacheObject${CacheObject.columnKey}
             ON $_tableCacheObject (${CacheObject.columnKey});
         ''');
       }));
@@ -160,6 +160,24 @@ class SqliteAsyncCacheRepository extends CacheInfoRepository
   Future<List<CacheObject>> getAllObjects() async {
     final rows = await _db!.getAll('SELECT * FROM $_tableCacheObject;');
     return rows.map((r) => CacheObject.fromMap(_rowToMap(r))).toList();
+  }
+
+  @override
+  Future<Map<String, CacheObject>> getMany(Iterable<String> keys) async {
+    final list = keys.toList();
+    if (list.isEmpty) return const {};
+    final placeholders = List.filled(list.length, '?').join(',');
+    final rows = await _db!.getAll(
+      'SELECT * FROM $_tableCacheObject '
+      'WHERE ${CacheObject.columnKey} IN ($placeholders);',
+      list,
+    );
+    final result = <String, CacheObject>{};
+    for (final row in rows) {
+      final obj = CacheObject.fromMap(_rowToMap(row));
+      result[obj.key] = obj;
+    }
+    return result;
   }
 
   @override

@@ -54,6 +54,16 @@ class JsonCacheInfoRepository extends CacheInfoRepository
   }
 
   @override
+  Future<Map<String, CacheObject>> getMany(Iterable<String> keys) async {
+    final result = <String, CacheObject>{};
+    for (final key in keys) {
+      final obj = _cacheObjects[key];
+      if (obj != null) result[key] = obj;
+    }
+    return result;
+  }
+
+  @override
   Future<CacheObject> insert(
     CacheObject cacheObject, {
     bool setTouchedToNow = true,

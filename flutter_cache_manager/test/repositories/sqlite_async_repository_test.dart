@@ -208,6 +208,30 @@ void main() {
     });
   });
 
+  group('getMany', () {
+    test('returns only the keys present in the cache', () async {
+      final repo = SqliteAsyncCacheRepository(path: dbPath());
+      await repo.open();
+      await repo.insert(
+          CacheObject('u1', relativePath: 'p1', validTill: DateTime(2030)));
+      await repo.insert(
+          CacheObject('u2', relativePath: 'p2', validTill: DateTime(2030)));
+
+      final result = await repo.getMany(['u1', 'u3']);
+      expect(result.keys, ['u1']);
+      expect(result['u1']!.relativePath, 'p1');
+
+      await repo.close();
+    });
+
+    test('empty input returns empty map', () async {
+      final repo = SqliteAsyncCacheRepository(path: dbPath());
+      await repo.open();
+      expect(await repo.getMany(<String>[]), isEmpty);
+      await repo.close();
+    });
+  });
+
   group('exists + deleteDataFile', () {
     test('exists is false before open, true after', () async {
       final repo = SqliteAsyncCacheRepository(path: dbPath());
