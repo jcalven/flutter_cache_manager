@@ -192,9 +192,8 @@ class SqliteAsyncCacheRepository extends CacheInfoRepository
 
   @override
   Future<List<CacheObject>> getObjectsOverCapacity(int capacity) async {
-    final cutoff = DateTime.now()
-        .subtract(const Duration(days: 1))
-        .millisecondsSinceEpoch;
+    final cutoff =
+        DateTime.now().subtract(const Duration(days: 1)).millisecondsSinceEpoch;
     final rows = await _db!.getAll(
       '''
       SELECT * FROM $_tableCacheObject
