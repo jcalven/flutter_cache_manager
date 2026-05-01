@@ -1,5 +1,6 @@
 /// Generic cache manager for flutter.
-/// Saves web files on the storages of the device and saves the cache info using sqflite
+/// Saves web files on the storages of the device and saves the cache info
+/// using sqlite_async (FFI).
 library flutter_cache_manager;
 
 export 'src/cache_manager.dart';

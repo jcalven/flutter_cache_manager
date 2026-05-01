@@ -14,8 +14,8 @@ abstract class Config {
   /// there are more files the files that haven't been used for the longest
   /// time will be removed.
   /// [repo] is the [CacheInfoRepository] which stores the cache metadata. On
-  /// Android, iOS and macOS this defaults to [CacheObjectProvider], a
-  /// sqflite implementation due to legacy. On web this defaults to
+  /// Android, iOS and macOS this defaults to [SqliteAsyncCacheRepository], an
+  /// FFI-direct sqlite_async implementation. On web this defaults to
   /// [NonStoringObjectProvider]. On the other platforms this defaults to
   /// [JsonCacheInfoRepository].
   /// The [fileSystem] defines where the cached files are stored and the

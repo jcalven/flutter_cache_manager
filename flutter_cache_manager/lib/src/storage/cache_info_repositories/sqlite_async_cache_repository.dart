@@ -12,9 +12,8 @@ const _tableCacheObject = 'cacheObject';
 
 /// SQLite-backed cache info repository using `sqlite_async` (FFI direct).
 ///
-/// Drop-in replacement for the deprecated sqflite-backed `CacheObjectProvider`.
-/// Schema is identical, so a database written by the old repo can be read by
-/// this one without migration.
+/// On-disk schema matches what previous sqflite-based versions of this package
+/// wrote, so a database written by an older release is readable as-is.
 class SqliteAsyncCacheRepository extends CacheInfoRepository
     with CacheInfoRepositoryHelperMethods {
   SqliteDatabase? _db;
@@ -54,7 +53,18 @@ class SqliteAsyncCacheRepository extends CacheInfoRepository
         ''');
       }));
 
-    _db = SqliteDatabase(path: path);
+    _db = SqliteDatabase(
+      path: path,
+      // Tuning for a small-payload, write-light, read-heavy cache:
+      //  - WAL: concurrent reads while a write is in flight.
+      //  - NORMAL sync: durable enough for a rebuildable cache (FULL is overkill).
+      // Both match sqlite_async's defaults today; set explicitly to anchor
+      // behaviour against future package-default drift.
+      options: const SqliteOptions(
+        journalMode: SqliteJournalMode.wal,
+        synchronous: SqliteSynchronous.normal,
+      ),
+    );
     await migrations.migrate(_db!);
     return opened();
   }

@@ -94,7 +94,7 @@ void main() {
       final result2 = await repo.updateOrInsert(
         inserted.copyWith(relativePath: 'c2.jpg'),
       );
-      // Update path returns the affected row count (int), matching CacheObjectProvider.
+      // The update path returns the affected row count (int).
       expect(result2, isA<int>());
 
       final fetched = await repo.get('https://example.com/c.jpg');
