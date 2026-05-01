@@ -19,6 +19,7 @@ dependencies:
   path_provider: ^2.1.4
   rxdart: '>=0.27.7 <0.29.0'
   sqflite: ^2.3.3+1
+  sqlite_async: ^0.14.1
   uuid: ^4.4.2
 
 dev_dependencies:
